@@ -1,0 +1,18 @@
+`default_nettype none
+module top_module(
+    input a,
+    input b,
+    input c,
+    input d,
+    output out,
+    output out_n   ); 
+    
+    wire ab, cd, last;
+    
+    assign ab = a & b;
+    assign cd = c & d;
+    assign last = ab|cd;
+    assign out = last;
+    assign out_n = ~last;
+
+endmodule
