@@ -1,0 +1,22 @@
+module top_module(
+    input [31:0] a,
+    input [31:0] b,
+    input sub,
+    output [31:0] sum
+);
+    wire [15:0] sum1, sum0;
+    wire [31:0] b_inv;
+    wire [31:0] mask;
+    wire carry, carry_out;
+    
+    assign mask = sub ? {32{1'b1}} : 32'b0;
+    assign b_inv = b ^ mask;
+    
+    //instances of 16 bit adders
+    add16 inst0(.a(a[15:0]),.b(b_inv[15:0]), .cin(sub), .sum(sum0), .cout(carry));
+    add16 inst1(.a(a[31:15]), .b(b_inv[31:15]), .cin(carry), .sum(sum1), .cout(carry_out));
+    
+    // calculate the difference
+    assign sum = {carry_out,sum1, sum0};
+
+endmodule

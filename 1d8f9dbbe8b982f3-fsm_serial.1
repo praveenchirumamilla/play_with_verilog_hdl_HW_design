@@ -1,0 +1,48 @@
+module top_module(
+    input clk,
+    input in,
+    input reset,    // Synchronous reset
+    output done
+); 
+    
+    parameter pre_start = 0, start = 1, count0 = 2, count1 = 3, count2 = 4, count3 = 5, count4 = 6, count5 = 7, count6 = 8, count7 = 9, stop = 10, out = 11;
+    reg [3:0] state, next_state;
+    reg[2:0] counter;
+    
+    // Combo logic
+    always @(*) begin
+        case(state) 
+            pre_start : next_state = in? start : pre_start;
+            start : next_state = in ? start : count0;
+            //count : next_state = (counter == 3'h7) ? (in ? stop : start) : count;
+            count0 : next_state = count1;
+            count1 : next_state = count2;
+            count2 : next_state = count3;
+            count3 : next_state = count4;
+            count4 : next_state = count5;
+            count5 : next_state = count6;
+            count6 : next_state = count7;
+            count7 : next_state = stop;
+            stop  : next_state = in ? out : pre_start;
+            out   : next_state = in ? start : count0;
+        endcase
+    end
+    
+    // seq logic
+    always @(posedge clk) begin
+        if(reset) begin
+           state <= pre_start; 
+        end else begin
+           state <= next_state;
+         /*   if(state == count) begin
+                counter <= counter + 1'b1;
+            end else if(state == stop) begin
+                counter <= 3'b0;
+            end    */      
+        end
+    end
+    
+    // Output 
+    assign done = (state == out);
+
+endmodule

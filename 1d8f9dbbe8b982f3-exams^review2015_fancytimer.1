@@ -1,0 +1,83 @@
+module top_module (
+    input clk,
+    input reset,      // Synchronous reset
+    input data,
+    output [3:0] count,
+    output counting,
+    output done,
+    input ack );
+    
+    parameter s=0, s1 = 1, s11 = 2, s110=3, s1101 = 4, shift=5, count_st = 6, wait_done=7;
+    reg [3:0] state, next_state;
+    reg [3:0] shft_reg;
+    reg [1:0] shft_count;
+    reg [9:0] counter;
+    reg [3:0] counter_flit;
+    wire done_counting;
+    wire done_shifting;
+    
+    // Combo logic
+    always @(*) begin
+        case(state)
+            s     		: next_state = data ? s1 : s;
+            s1   		: next_state = data ? s11 : s;
+            s11   		: next_state = data ? s11 : s110;
+            s110   		: next_state = data ? s1101 : s;
+            s1101       : next_state = shift;
+            shift       : next_state = done_shifting ? count_st : shift;
+            //shift0 		: next_state = shift1;
+           // shift1 		: next_state = shift2;
+           // shift2 		: next_state = shift3;
+           // shift3 		: next_state = count_st;
+            count_st    : next_state = done_counting ? wait_done : count_st;
+            wait_done   : next_state = ack ? s : wait_done;
+        endcase
+    end
+    
+    assign count =  (state == count_st) ?  (shft_reg - counter_flit) : 4'b0;
+    assign done_shifting = (state == shift) ? (shft_count == 2'b11) : 1'b0;
+    //assign done_counting = (state == count_st) & (counter == ((shft_reg+1'b1)*1000)-1); //fix it
+    assign done_counting = (state == count_st) ? ((counter == 999) & (shft_reg == counter_flit)) : 1'b0;
+    assign counting = (state == count_st); //fix it
+    assign done = (state == wait_done);
+
+    
+    // Sequential logic
+    always @(posedge clk) begin
+        if(reset) begin
+            state <= s;
+            shft_reg <= 4'b0;
+            counter <= 8'b0;
+            shft_count <= 2'b0;
+        end else begin
+           state <= next_state;
+            //state in shift mode
+            case(state)
+                s, s1,s11,s110, s1101   :  begin
+               							shft_reg <= 4'b0;
+               							counter <= 8'b0; 
+                    					shft_count <= 2'b0;
+                    					counter_flit <= 4'b0;
+                					end
+                shift : begin
+                    shft_reg <= {shft_reg[2:0], data};
+                    shft_count <= shft_count + 1'b1;
+                end
+				count_st : begin
+                   counter <= counter + 1'b1; 
+                    if(counter == 999) begin
+                        counter <= 9'b0;
+                        counter_flit <= counter_flit + 1'b1;
+                    end                  
+                end
+                default : begin
+                      shft_reg <= 4'b0;
+               	      counter <= 8'b0; 
+                      shft_count <= 2'b0;  
+                      counter_flit <= 4'b0;
+                end
+            endcase
+        end
+    end
+
+endmodule

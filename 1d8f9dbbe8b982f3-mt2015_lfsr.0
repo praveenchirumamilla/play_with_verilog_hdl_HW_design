@@ -1,0 +1,19 @@
+module top_module (
+	input [2:0] SW,      // R
+	input [1:0] KEY,     // L and clk
+	output [2:0] LEDR);  // Q
+
+    wire clk;
+    wire q0_next, q1_next, q2_next;
+    
+    assign clk = KEY[0];
+    assign q0_next = KEY[1] ? SW[0] : LEDR[2];
+    assign q1_next = KEY[1] ? SW[1] : LEDR[0];
+    assign q2_next = KEY[1] ? SW[2] : LEDR[1] ^ LEDR[2];
+    
+    // seq logic
+    always @(posedge clk) begin
+        LEDR <= { q2_next, q1_next, q0_next};
+    end
+
+endmodule

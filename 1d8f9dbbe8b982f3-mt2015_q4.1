@@ -1,0 +1,13 @@
+module top_module (input x, input y, output z);
+    wire a1_out, a2_out, b1_out, b2_out;
+    
+    // Instantiations
+    A inst_a1(.x(x), .y(y), .z(a1_out));
+    A inst_a2(.x(x), .y(y), .z(a2_out));
+    B inst_b1(.x(x), .y(y), .z(b1_out));
+    B inst_b2(.x(x), .y(y), .z(b2_out));
+    
+    // compute output
+    assign z = (a1_out | b1_out) ^ (a2_out & b2_out);
+
+endmodule

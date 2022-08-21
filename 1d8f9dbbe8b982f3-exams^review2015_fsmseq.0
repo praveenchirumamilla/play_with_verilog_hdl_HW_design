@@ -1,0 +1,23 @@
+module top_module (
+    input clk,
+    input reset,      // Synchronous reset
+    input data,
+    output start_shifting);
+    
+    reg [3:0] shft_reg;
+    parameter mask = 3'b001;
+    reg shift;
+    
+    always @(posedge clk) begin
+        if(reset) begin
+            shft_reg <= 4'b0;
+            start_shifting <= 1'b0;
+        end else begin
+            shft_reg <= {shft_reg[2:0], data};
+            if((shft_reg[2:0] == 3'b110) & data) begin
+                start_shifting <= 1'b1;
+            end 
+        end
+    end
+    
+endmodule
