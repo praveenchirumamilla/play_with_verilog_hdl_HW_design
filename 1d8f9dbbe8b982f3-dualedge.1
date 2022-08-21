@@ -1,0 +1,20 @@
+module top_module (
+    input clk,
+    input d,
+    output q
+);
+
+    reg pos, neg;
+    reg pos_edge, neg_edge;
+    always @(posedge clk) begin
+        pos_edge <= 1'b1;
+       pos <= d; 
+    end
+    
+    always @(negedge clk) begin
+        pos_edge <= 1'b0;
+       neg <= d; 
+    end
+    
+    assign q = pos_edge ? pos : neg;
+endmodule

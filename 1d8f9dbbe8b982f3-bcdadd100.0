@@ -1,0 +1,26 @@
+module top_module( 
+    input [399:0] a, b,
+    input cin,
+    output cout,
+    output [399:0] sum );
+    
+    // Variable declaration
+    wire [98:0] cin_array;
+    wire [98:0] carry;
+    
+    // Array Instantiation.
+    //bcd_fadd inst[99:0] (.a(a), .b(b), .cin({cin_array,cin}), .cout({cout,carry}), .sum(sum));
+    
+    // Generate logic
+    wire [100:0] carry_gen;
+    
+    generate
+        genvar i;
+        for(i = 0; i < 100; i = i+1) begin : inst_generate
+            bcd_fadd inst_gen(.a(a[i*4+3:i*4]), .b(b[i*4+3:i*4]), .cin(carry_gen[i]), .cout(carry_gen[i+1]), .sum(sum[i*4+3:i*4]));
+        end
+        
+        assign carry_gen[0] = cin;
+        assign cout = carry_gen[100];
+    endgenerate  
+endmodule

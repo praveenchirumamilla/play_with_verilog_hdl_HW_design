@@ -1,0 +1,20 @@
+module top_module(
+	input clk, 
+	input load, 
+	input [9:0] data, 
+	output tc
+);
+    reg [9:0] counter;
+    
+    // seq logic
+    always @(posedge clk) begin
+        if(load) begin
+           counter <= data; 
+        end else if (data != 1'b0) begin
+           data <= data - 1'b1; 
+        end
+    end
+
+    // combo logic
+    assign tc = (data == 10'b0);
+endmodule

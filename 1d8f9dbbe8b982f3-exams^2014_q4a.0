@@ -1,0 +1,15 @@
+module top_module (
+    input clk,
+    input w, R, E, L,
+    output Q
+);
+    wire q_next, q_pre;
+    assign q_pre = E ? w : Q;
+    assign q_next = L ? R : q_pre;
+    
+    // seq logic
+    always @(posedge clk) begin
+       Q <= q_next; 
+    end
+
+endmodule

@@ -1,0 +1,16 @@
+module top_module (
+    input clk,
+    input x,
+    output z
+); 
+    
+    wire zin_1, zin_2, zin_3;
+    assign z = ~(zin_1 | zin_2 | zin_3);
+    
+    // seq logic
+    always @(posedge clk) begin
+       	zin_1 <= zin_1 ^ x;
+       	zin_2 <= x & (~zin_2);
+        zin_3 <= x | (~zin_3);
+    end
+endmodule

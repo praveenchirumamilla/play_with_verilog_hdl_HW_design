@@ -1,0 +1,14 @@
+module top_module (
+    input clk,
+    input [7:0] in,
+    output [7:0] anyedge
+);
+
+    reg [7:0] pedge_prev;
+    
+    // Edge detection
+    always @(posedge clk) begin
+       pedge_prev <= in;
+       anyedge <=  pedge_prev ^ in;
+    end
+endmodule

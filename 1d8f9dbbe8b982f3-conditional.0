@@ -1,0 +1,13 @@
+module top_module (
+    input [7:0] a, b, c, d,
+    output [7:0] min);//
+
+    // assign intermediate_result1 = compare? true: false;
+    wire a_less_b, c_less_d;
+    
+    assign a_less_b = (a < b) ? 1 : 0;
+    assign c_less_d = (c < d) ? 1 : 0;
+    
+    assign min = a_less_b ? (c_less_d ? (a < c ? a : c) : a < d ? a : d) : ((c_less_d ? (b < c ? b : c) : b < d ? b : d));
+
+endmodule

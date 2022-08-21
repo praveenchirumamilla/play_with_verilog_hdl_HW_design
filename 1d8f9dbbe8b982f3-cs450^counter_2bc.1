@@ -1,0 +1,33 @@
+module top_module(
+    input clk,
+    input areset,
+    input train_valid,
+    input train_taken,
+    output [1:0] state
+);
+
+    localparam SNT = 0, WNT = 1, WT = 2, ST = 3;
+    reg [1:0] int_state, next_state;
+   
+    // Seq logic
+    always @(posedge clk, posedge areset) begin
+        if(areset) begin
+            int_state <= WNT;
+        end else begin
+            int_state <= next_state;
+        end
+    end
+    
+    // Combo logic
+    always @(*) begin
+        case(int_state) 
+            SNT   : next_state = (train_valid & train_taken) ? WNT :  int_state;
+            WNT   : next_state = train_valid ? (train_taken ? WT : SNT) : int_state;
+            WT    : next_state = train_valid ? (train_taken ? ST : WNT) : int_state;
+            ST    : next_state = train_valid ? (train_taken ? ST : WT) : int_state;
+        endcase
+    end
+    
+    // assign output
+    assign state = next_state;
+endmodule

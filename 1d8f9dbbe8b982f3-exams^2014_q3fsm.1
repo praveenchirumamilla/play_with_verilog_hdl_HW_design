@@ -1,0 +1,41 @@
+module top_module (
+    input clk,
+    input reset,   // Synchronous reset
+    input s,
+    input w,
+    output z
+);
+    localparam A = 0, B = 1;
+    reg state, next_state;
+    reg[1:0] counter;
+    reg [2:0] data;
+    
+    // combo logic
+    always @(*) begin
+        case(state) 
+           A : next_state = s ? B : state;
+           B : next_state = state;
+        endcase         
+    end
+
+    // seq logic
+    always @(posedge clk) begin
+        if(reset) begin
+           state <= A; 
+            counter <= 2'b0;
+        end else begin
+           state <= next_state;
+            if(state == B) begin
+                counter <= counter + 1'b1;
+                data <= {data[1:0], w};
+            end
+            
+            if(counter == 2'b10) 
+                counter <= 2'b0;              
+        end
+    end
+    
+    // output combo logic
+    assign z = (state == B) & (counter == 2'b0) & (data != 3'b0) & (~^data);
+            
+endmodule

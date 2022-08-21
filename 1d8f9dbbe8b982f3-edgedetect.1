@@ -1,0 +1,16 @@
+module top_module (
+    input clk,
+    input [7:0] in,
+    output [7:0] pedge
+);
+    reg [7:0] pedge_prev;
+    
+    // Edge detection
+    always @(posedge clk) begin
+        for(int i = 0; i < $bits(in); i = i+1) begin
+            pedge_prev[i] = in[i];
+            pedge[i] <=  ~pedge_prev[i] & in[i];
+        end
+    end
+
+endmodule

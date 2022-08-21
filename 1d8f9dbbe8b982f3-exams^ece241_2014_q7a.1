@@ -1,0 +1,26 @@
+module top_module (
+    input clk,
+    input reset,
+    input enable,
+    output [3:0] Q,
+    output c_enable,
+    output c_load,
+    output [3:0] c_d
+);
+    
+    assign c_enable = enable;
+    assign c_load = reset | (Q == 4'hc);
+    assign c_d = reset | (Q == 4'hc) ? 4'b1 : 4'b0;
+    
+    //Seq logic
+    always @(posedge clk) begin
+        if(reset) begin
+            Q <= 4'b1;
+        end else if (c_load) begin
+            Q <= c_d;
+        end else if (c_enable) begin
+           Q <= Q + 1'b1; 
+        end            
+    end
+
+endmodule

@@ -1,0 +1,20 @@
+module top_module (
+    input clk,
+    input j,
+    input k,
+    output Q); 
+    
+    wire q_next;
+    assign q_next = Q;
+    
+    // Seq JK flip flop
+    always @(posedge clk) begin
+        case({j,k}) 
+            2'b00 : Q <= q_next;
+            2'b01 : Q <= 1'b0;
+            2'b10 : Q <= 1'b1;
+            2'b11 : Q <= ~q_next;
+        endcase
+    end
+
+endmodule

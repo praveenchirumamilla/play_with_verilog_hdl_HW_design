@@ -1,0 +1,29 @@
+module top_module (
+    input [3:0] SW, // R
+    input [3:0] KEY, // clk-0, E-1, L-2, w -3
+    output [3:0] LEDR //out
+); //
+
+    MUXDFF m0(.clk(KEY[0]), .R(SW[0]), .E(KEY[1]), .L(KEY[2]), .w(LEDR[1]), .out(LEDR[0]));
+    MUXDFF m1(.clk(KEY[0]), .R(SW[0]), .E(KEY[1]), .L(KEY[2]), .w(LEDR[2]), .out(LEDR[1]));
+    MUXDFF m2(.clk(KEY[0]), .R(SW[0]), .E(KEY[1]), .L(KEY[2]), .w(LEDR[3]), .out(LEDR[2]));
+    MUXDFF m3(.clk(KEY[0]), .R(SW[0]), .E(KEY[1]), .L(KEY[2]), .w(KEY[3]), .out(LEDR[3]));                                  
+endmodule
+
+module MUXDFF (
+    input clk,
+    input R,
+    input E,
+    input L,
+    input w,
+    output out   
+);
+    
+    always @(posedge clk) begin
+        if(L) begin
+            out <= R;
+        end else if(E) begin
+            out <= w;
+        end
+    end
+endmodule

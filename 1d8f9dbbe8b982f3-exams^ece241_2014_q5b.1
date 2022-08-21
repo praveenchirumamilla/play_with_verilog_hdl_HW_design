@@ -1,0 +1,39 @@
+module top_module (
+    input clk,
+    input areset,
+    input x,
+    output z
+); 
+
+    reg [1:0] state, next_state;
+    localparam none = 0, start =1;
+    
+    // combo logic
+    always @(posedge clk, posedge areset) begin
+        if( areset ) begin
+            z <= 1'b0; 
+            state <= none;
+        end else begin
+            state <= next_state;
+            
+          /*  case(state) 
+                none  : z <= x ? 1'b1: 1'b0;
+                start : z <= ~x;
+            endcase */
+        end
+    end
+
+    // combo logic
+    always @(*) begin
+        case(state)
+            none   : begin 
+                next_state = x ? start : state;
+                z = x ? 1'b1: 1'b0;
+            end
+            start  : begin 
+                next_state  = state;
+                z <= ~x;
+            end
+        endcase
+    end
+endmodule
